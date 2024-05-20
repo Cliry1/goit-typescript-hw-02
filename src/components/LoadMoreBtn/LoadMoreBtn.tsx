@@ -1,7 +1,7 @@
 import css from "./LoadMoreBtn.module.css";
-
-export default function LoadMoreBtn({ onLoadMore }) {
-  const handleLoadMore = () => {
+import { LoadButtonMore } from "./LoadMoreBtn.types";
+export default function LoadMoreBtn({ onLoadMore }:LoadButtonMore) {
+  const handleLoadMore = ():void => {
     onLoadMore();
   };
   return (

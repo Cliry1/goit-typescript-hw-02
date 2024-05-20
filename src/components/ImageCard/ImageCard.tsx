@@ -1,10 +1,10 @@
 import css from "./ImageCard.module.css";
-
+import { InfoCard } from "./ImageCard.types";
 export default function ImageCard({ item: {
   alt_description,
   urls,
   likes
-}, openModal }) {
+}, openModal }:InfoCard) {
   return (
     <div>
       <img

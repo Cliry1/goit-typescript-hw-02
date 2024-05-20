@@ -1,7 +1,7 @@
 import css from "./ImageGallery.module.css";
 import ImageCard from "../ImageCard/ImageCard";
-
-export default function ImageGallery({ items, openModal }) {
+import { InfoList } from "./ImageGallery.types";
+export default function ImageGallery({ items, openModal }:InfoList) {
   return (
     <ul className={css.ul}>
       {items.map((item) => (

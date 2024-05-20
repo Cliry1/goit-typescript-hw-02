@@ -5,27 +5,27 @@ import ImageModal from "./ImageModal/ImageModal";
 import Loader from "./Loader/Loader";
 import LoadMoreBtn from "./LoadMoreBtn/LoadMoreBtn";
 import ErrorMessage from "./ErrorMessage/ErrorMessage";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
-
+import { ModalTypes,ArticleTypes } from "./App.types";
 
 export default function App() {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalItem, setModalItem] = useState("");
-  const [articles, setArticles] = useState([]);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [pageCount, setPageCount] = useState(1);
-  const [topic, setTopic] = useState("");
-  const [totalPages, setTotalPages] = useState(null);
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+  const [modalItem, setModalItem] = useState<ModalTypes>({regular: "", alt_description: "", likes: 0,});
+  const [articles, setArticles] =  useState<ArticleTypes[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [pageCount, setPageCount] = useState<number>(1);
+  const [topic, setTopic] = useState<string>("");
+  const [totalPages, setTotalPages] = useState<number|null>(null);
 
-  function openModal(item) {
+  function openModal(item:ModalTypes):void {
     setIsOpen(true);
     setModalItem(item);
   }
 
-  function closeModal() {
+  function closeModal():void {
     setIsOpen(false);
   }
   useEffect(() => {
@@ -33,16 +33,20 @@ export default function App() {
       return;
     }
 
-    const searchImg = async () => {
+      async function searchImg<T extends object>():  Promise<void|string> {
       try {
         setError(false);
         setLoading(true);
-        const data = await fetchArticles(topic, pageCount);
-        if (data.total_pages === 0) {
+        const data: T = await fetchArticles<T>(topic, pageCount);
+        if ((data as any).total_pages === 0) {
           return toast.error("No results!");
         }
-        setTotalPages(data.total_pages);
-        setArticles((prevArticles) => [...prevArticles, ...data.results]);
+        else{
+        setTotalPages((data as any).total_pages);
+        setArticles((prevArticles) => [...prevArticles, ...(data as any).results]);
+
+        }
+
 
       } catch (error) {
         toast.error("Error!!!");
@@ -62,24 +66,24 @@ export default function App() {
     }
   }, [topic, pageCount]);
 
-  const handleSearch = async (topic) => {
+  const handleSearch = async (topic:string):Promise<void> => {
     setArticles([]);
     setPageCount(1);
     setTopic(topic);
   };
 
-  const handleSearchAdd = async () => {
+  const handleSearchAdd = async ():Promise<void> => {
     setPageCount((prevCount) => prevCount + 1);
   };
 
-  async function fetchArticles(topic, pageCount) {
+  async function fetchArticles <T>(topic:string, pageCount:number):Promise<T> {
     const itemParam = new URLSearchParams({
       client_id: "zswY079qTyGv_X4mnQxlTfwxYMYdyFlo-S6rA35ODMI",
       query: topic,
-      page: pageCount,
+      page: pageCount.toString(),
       orientation: "landscape",
     });
-    const collection = await axios.get(
+    const collection:AxiosResponse<T> = await axios.get<T>(
       `https://api.unsplash.com/search/photos?${itemParam}`
     );
 
@@ -95,7 +99,7 @@ export default function App() {
         <ImageGallery items={articles} openModal={openModal} />
       )}
 
-      <Toaster position="top-right " />
+      <Toaster position="top-right" />
       <ImageModal img={modalItem} closeModal={closeModal} modalIsOpen={modalIsOpen}/>
       
       {loading && (
@@ -103,7 +107,7 @@ export default function App() {
           <Loader />
         </div>
       )}
-      {pageCount < totalPages && <LoadMoreBtn onLoadMore={handleSearchAdd} />}
+      {pageCount < totalPages! && <LoadMoreBtn onLoadMore={handleSearchAdd} />}
     </div>
   );
 }

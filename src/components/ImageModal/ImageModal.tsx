@@ -2,6 +2,7 @@ import css from "./ImageModal.module.css";
 import { AiFillLike } from "react-icons/ai";
 import { MdDescription } from "react-icons/md";
 import Modal from "react-modal";
+import { ModalTypes } from "./ImageModal.types";
 
 const customStyles = {
   content: {
@@ -18,7 +19,7 @@ const customStyles = {
   },
 };
 
-export default function ImageModal({ img:{regular, alt_description, likes}, closeModal, modalIsOpen }) {
+export default function ImageModal({ img:{regular, alt_description, likes}, closeModal, modalIsOpen }: ModalTypes) {
   Modal.setAppElement("#root");
 
   return (
