@@ -8,7 +8,8 @@ import ErrorMessage from "./ErrorMessage/ErrorMessage";
 import axios, { AxiosResponse } from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
-import { ModalTypes,ArticleTypes } from "./App.types";
+import { ModalTypes,ArticleTypes,ApiArticleTypes } from "./App.types";
+
 
 export default function App() {
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
@@ -38,12 +39,12 @@ export default function App() {
         setError(false);
         setLoading(true);
         const data: T = await fetchArticles<T>(topic, pageCount);
-        if ((data as any).total_pages === 0) {
+        if ((data as ArticleTypes).total_pages === 0) {
           return toast.error("No results!");
         }
         else{
-        setTotalPages((data as any).total_pages);
-        setArticles((prevArticles) => [...prevArticles, ...(data as any).results]);
+        setTotalPages((data as ApiArticleTypes).total_pages);
+        setArticles((prevArticles) => [...prevArticles, ...(data as ApiArticleTypes).results]);
 
         }
 
